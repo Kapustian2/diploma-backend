@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const { register, login, getUsers, updateUser } = require("./controllers/user");
@@ -12,6 +13,12 @@ const ROLES = require("./constants/roles");
 const port = 3001;
 
 const app = express();
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+  })
+);
 
 app.use(express.static("../frontend/build"));
 
