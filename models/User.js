@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema(
     },
     role: {
       type: Number,
-      default: roles.GUEST,
+      default: roles.CUSTOMER,
     },
   },
   { timestamps: true }

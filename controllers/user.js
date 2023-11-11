@@ -42,10 +42,17 @@ function getUsers() {
   return User.find();
 }
 
+async function updateUser(id, userData) {
+  return await User.findByIdAndUpdate(id, userData, {
+    returnDocument: "after",
+    new: true,
+  });
+}
+
 function getRoles() {
   return [
     { id: ROLES.ADMIN, name: "Admin" },
-    { id: ROLES.CUSTOMER, name: "CUSTOMER" },
+    { id: ROLES.CUSTOMER, name: "Customer" },
     { id: ROLES.GUEST, name: "Guest" },
   ];
 }
@@ -55,4 +62,5 @@ module.exports = {
   login,
   getUsers,
   getRoles,
+  updateUser,
 };
