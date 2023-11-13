@@ -1,6 +1,10 @@
 require("dotenv").config();
 
 const express = require("express");
+const {
+  Validator,
+  ValidationError,
+} = require("express-json-validator-middleware");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -9,6 +13,19 @@ const mapUser = require("./helpers/mapUser");
 const hasRole = require("./middlewares/hasRole");
 const authenticated = require("./middlewares/authenticated");
 const ROLES = require("./constants/roles");
+const mapProducts = require("./helpers/mapProducts");
+const {
+  addProduct,
+  getProducts,
+  editProduct,
+  deleteProduct,
+} = require("./controllers/product");
+const {
+  createProductSchema,
+  updateProductSchema,
+} = require("./schemas/product.schema");
+
+const { validate } = new Validator();
 
 const port = 3001;
 
@@ -53,6 +70,11 @@ app.post("/logout", (req, res) => {
   res.cookie("token", "", { httpOnly: true }).send({});
 });
 
+app.get("/products", async (req, res) => {
+  const products = await getProducts();
+  res.send({ data: products.map(mapProducts) });
+});
+
 app.use(authenticated);
 
 app.get("/users", hasRole([ROLES.ADMIN]), async (req, res) => {
@@ -67,7 +89,7 @@ app.get("/users/roles", hasRole([ROLES.ADMIN]), async (req, res) => {
 
 app.patch("/users/:id", hasRole([ROLES.ADMIN]), async (req, res) => {
   const newUser = await updateUser(req.params.id, {
-    role: req.body.roleId,
+    role: req.body.role,
   });
   res.send({ data: mapUser(newUser) });
 });
@@ -76,6 +98,44 @@ app.delete("/users/:id", hasRole([ROLES.ADMIN]), async (req, res) => {
   await deleteUser(req.params.id);
 
   res.send({ error: null });
+});
+
+app.post(
+  "/products",
+  validate({ body: createProductSchema }),
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const newProducts = await addProduct(req.body);
+
+    res.send({ data: mapProducts(newProducts) });
+  }
+);
+
+app.patch(
+  "/products/:id",
+  validate({ body: updateProductSchema }),
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const updatedProduct = await editProduct(req.params.id, req.body);
+
+    res.send({ data: mapProducts(updatedProduct) });
+  }
+);
+
+app.delete("/products/:id", hasRole([ROLES.ADMIN]), async (req, res) => {
+  await deleteProduct(req.params.id);
+
+  res.send({ error: null });
+});
+
+app.use((error, req, res, next) => {
+  if (error instanceof ValidationError) {
+    res.status(400).send(error.validationErrors);
+    next();
+  } else {
+    res.status(500).send("Unhandler error");
+    next(error);
+  }
 });
 
 mongoose.connect(process.env.DB_CONNECTION_STRING).then(() =>

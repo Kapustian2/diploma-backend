@@ -3,5 +3,6 @@ module.exports = function (user) {
     id: user.id,
     login: user.login,
     role: user.role,
+    createdAt: user.createdAt,
   };
 };
