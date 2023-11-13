@@ -1,8 +1,5 @@
 module.exports = function (user) {
-  return {
-    id: user.id,
-    login: user.login,
-    role: user.role,
-    createdAt: user.createdAt,
-  };
+  const { password, _id: id, updatedAt, __v, ...rest } = user;
+
+  return { id, ...rest };
 };

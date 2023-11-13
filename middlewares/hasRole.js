@@ -4,7 +4,7 @@ module.exports = function (roles) {
       res.status(403).send("Unauthorized");
     }
     if (!roles.includes(req.user.role)) {
-      res.send({ error: "Access denied!" });
+      res.status(403).send({ error: "Access denied!" });
 
       return;
     }

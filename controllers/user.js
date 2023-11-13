@@ -39,7 +39,7 @@ async function login(login, password) {
 }
 
 function getUsers() {
-  return User.find();
+  return User.find().lean();
 }
 
 async function updateUser(id, userData) {

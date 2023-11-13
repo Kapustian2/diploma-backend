@@ -24,6 +24,7 @@ const {
   createProductSchema,
   updateProductSchema,
 } = require("./schemas/product.schema");
+const { createUserSchema, updateUserSchema } = require("./schemas/user.schema");
 
 const { validate } = new Validator();
 
@@ -42,17 +43,21 @@ app.use(express.static("../frontend/build"));
 app.use(cookieParser());
 app.use(express.json());
 
-app.post("/register", async (req, res) => {
-  try {
-    const { user, token } = await register(req.body.login, req.body.password);
+app.post(
+  "/register",
+  validate({ body: createUserSchema }),
+  async (req, res) => {
+    try {
+      const { user, token } = await register(req.body.login, req.body.password);
 
-    res
-      .cookie("token", token, { httpOnly: true })
-      .send({ error: null, user: mapUser(user) });
-  } catch (e) {
-    res.send({ error: e.message || "Unknown error" });
+      res
+        .cookie("token", token, { httpOnly: true })
+        .send({ error: null, user: mapUser(user) });
+    } catch (e) {
+      res.send({ error: e.message || "Unknown error" });
+    }
   }
-});
+);
 
 app.post("/login", async (req, res) => {
   try {
@@ -87,12 +92,15 @@ app.get("/users/roles", hasRole([ROLES.ADMIN]), async (req, res) => {
   res.send({ data: roles });
 });
 
-app.patch("/users/:id", hasRole([ROLES.ADMIN]), async (req, res) => {
-  const newUser = await updateUser(req.params.id, {
-    role: req.body.role,
-  });
-  res.send({ data: mapUser(newUser) });
-});
+app.patch(
+  "/users/:id",
+  validate({ body: updateUserSchema }),
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const newUser = await updateUser(req.params.id, req.body);
+    res.send({ data: mapUser(newUser) });
+  }
+);
 
 app.delete("/users/:id", hasRole([ROLES.ADMIN]), async (req, res) => {
   await deleteUser(req.params.id);
