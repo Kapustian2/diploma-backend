@@ -19,6 +19,7 @@ const {
   getProducts,
   editProduct,
   deleteProduct,
+  getProduct,
 } = require("./controllers/product");
 const {
   createProductSchema,
@@ -78,6 +79,11 @@ app.post("/logout", (req, res) => {
 app.get("/products", async (req, res) => {
   const products = await getProducts();
   res.send({ data: products.map(mapProducts) });
+});
+
+app.get("/products/:id", async (req, res) => {
+  const product = await getProduct(req.params.id);
+  res.send({ data: mapProducts(product) });
 });
 
 app.use(authenticated);

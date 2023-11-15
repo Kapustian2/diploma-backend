@@ -31,7 +31,7 @@ function getProducts() {
 
 // get item
 function getProduct(id) {
-  return Post.findById(id);
+  return Product.findById(id);
 }
 
 module.exports = {
