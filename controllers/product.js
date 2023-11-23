@@ -24,8 +24,18 @@ async function editProduct(id, product) {
 
 // get
 
-function getProducts() {
-  return Product.find();
+async function getProducts(search = "", limit = 10, page = 1) {
+  const [products, count] = await Promise.all([
+    Product.find({ title: { $regex: search, $options: "i" } })
+      .limit(limit)
+      .skip((page - 1) * limit),
+    Product.countDocuments({ title: { $regex: search, $options: "i" } }),
+  ]);
+
+  return {
+    products,
+    lastPage: Math.ceil(count / limit),
+  };
 }
 
 // get item

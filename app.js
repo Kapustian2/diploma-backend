@@ -78,8 +78,11 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/products", async (req, res) => {
-  const products = await getProducts();
-  res.send({ data: products.map(mapProducts) });
+  const result = await getProducts();
+  res.send({
+    data: result.products.map(mapProducts),
+    lastPage: result.lastPage,
+  });
 });
 
 app.get("/products/:id", async (req, res) => {
