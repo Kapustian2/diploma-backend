@@ -35,9 +35,11 @@ async function getProducts(search = "", limit = 10, page = 1) {
     title: { $regex: search, $options: "i" },
   });
 
+  const pagination = { lastPage: Math.ceil(count / limit), page, limit };
+
   return {
     products,
-    lastPage: Math.ceil(count / limit),
+    pagination,
   };
 }
 
