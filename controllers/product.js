@@ -16,7 +16,6 @@ function deleteProduct(id) {
 // change
 
 async function editProduct(id, product) {
-  console.log(id, product);
   const newProduct = await Product.findByIdAndUpdate(id, product, {
     returnDocument: "after",
   });

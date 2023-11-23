@@ -14,7 +14,7 @@ const ProductSchema = {
       type: "string",
     },
     sale: {
-      type: "boolean",
+      type: "number",
     },
   },
 };
