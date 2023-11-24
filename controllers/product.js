@@ -24,16 +24,26 @@ async function editProduct(id, product) {
 
 // get
 
-async function getProducts(search = "", limit = 10, page = 1) {
+async function getProducts(search = "", limit = 10, page = 1, sort = "cheap") {
+  let sortQuery;
+  if (sort === "expensive") {
+    sortQuery = [
+      ["priceWithDiscount", -1],
+      ["price", -1],
+    ];
+  } else {
+    sortQuery = [
+      ["priceWithDiscount", 1],
+      ["price", 1],
+    ];
+  }
+
   const products = await Product.find({
     title: { $regex: search, $options: "i" },
   })
-    .sort([
-      ["priceWithDiscount", 1],
-      ["price", 1],
-    ])
-    .limit(limit)
-    .skip((page - 1) * limit);
+    .sort(sortQuery)
+    .skip((page - 1) * limit)
+    .limit(limit);
 
   const count = await Product.countDocuments({
     title: { $regex: search, $options: "i" },
