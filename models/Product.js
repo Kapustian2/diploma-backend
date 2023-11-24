@@ -22,6 +22,12 @@ const ProductSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    priceWithDiscount: {
+      type: Number,
+      default: function () {
+        return (this.price * (100 - this.sale)) / 100;
+      },
+    },
   },
   { timestamps: true }
 );

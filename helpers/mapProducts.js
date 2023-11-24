@@ -8,5 +8,6 @@ module.exports = function (products) {
     imageUrl: products.imageUrl,
     category: products.category,
     sale: products.sale,
+    priceWithDiscount: products.priceWithDiscount,
   };
 };
