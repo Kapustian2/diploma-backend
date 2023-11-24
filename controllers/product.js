@@ -24,7 +24,13 @@ async function editProduct(id, product) {
 
 // get
 
-async function getProducts(search = "", limit = 10, page = 1, sort = "cheap") {
+async function getProducts(
+  search = "",
+  limit = 10,
+  page = 1,
+  sort = "cheap",
+  category = ""
+) {
   let sortQuery;
   if (sort === "expensive") {
     sortQuery = [
@@ -38,16 +44,20 @@ async function getProducts(search = "", limit = 10, page = 1, sort = "cheap") {
     ];
   }
 
-  const products = await Product.find({
+  const query = {
     title: { $regex: search, $options: "i" },
-  })
+  };
+
+  if (category) {
+    query.category = category;
+  }
+
+  const products = await Product.find(query)
     .sort(sortQuery)
     .skip((page - 1) * limit)
     .limit(limit);
 
-  const count = await Product.countDocuments({
-    title: { $regex: search, $options: "i" },
-  });
+  const count = await Product.countDocuments(query);
 
   const pagination = { lastPage: Math.ceil(count / limit), page, limit };
 
