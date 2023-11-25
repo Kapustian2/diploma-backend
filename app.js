@@ -26,6 +26,7 @@ const {
   updateProductSchema,
 } = require("./schemas/product.schema");
 const { createUserSchema, updateUserSchema } = require("./schemas/user.schema");
+const { addToCart, getCart } = require("./controllers/userCart");
 
 const { validate } = new Validator();
 
@@ -160,6 +161,29 @@ app.use((error, req, res, next) => {
   } else {
     res.status(500).send("Unhandler error");
     next(error);
+  }
+});
+
+app.post("/addtocart", async (req, res, next) => {
+  await addToCart(req, res);
+  next();
+});
+
+app.get("/cart/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const userCart = await getCart(userId);
+
+    if (userCart) {
+      res.status(200).json({ data: userCart });
+    } else {
+      res.status(404).json({ error: "Корзина пользователя не найдена" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Произошла ошибка при получении корзины пользователя" });
   }
 });
 
