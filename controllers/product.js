@@ -29,7 +29,8 @@ async function getProducts(
   limit = 10,
   page = 1,
   sort = "cheap",
-  category = ""
+  category = "",
+  showSale = ""
 ) {
   let sortQuery;
   if (sort === "expensive") {
@@ -47,6 +48,10 @@ async function getProducts(
   const query = {
     title: { $regex: search, $options: "i" },
   };
+
+  if (showSale) {
+    query.sale = { $gt: 0 };
+  }
 
   if (category) {
     query.category = category;

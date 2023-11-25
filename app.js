@@ -83,7 +83,8 @@ app.get("/products", async (req, res) => {
     req.query.limit,
     req.query.page,
     req.query.sort,
-    req.query.category
+    req.query.category,
+    req.query.sale
   );
   res.send({
     data: result.products.map(mapProducts),
