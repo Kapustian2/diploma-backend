@@ -192,13 +192,9 @@ app.delete("/cart/:userId", async (req, res) => {
     const userId = req.params.userId;
     const productId = req.body.productId;
 
-    const deletedProduct = await deleteCart(userId, productId, res);
+    const result = await deleteCart(userId, productId);
 
-    if (deletedProduct) {
-      res.status(200).json({ message: "Товар успешно удален из корзины" });
-    } else {
-      return;
-    }
+    res.status(result.status).json({ message: result.message });
   } catch (error) {
     console.error(error);
     res

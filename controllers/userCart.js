@@ -42,14 +42,12 @@ const getCart = async (userId) => {
   }
 };
 
-const deleteCart = async (userId, productId, res) => {
+const deleteCart = async (userId, productId) => {
   try {
     let userCart = await UserCart.findOne({ userId });
 
     if (!userCart) {
-      return res
-        .status(404)
-        .json({ message: "Корзина пользователя не найдена" });
+      return { status: 404, message: "Корзина пользователя не найдена" };
     }
 
     const productIndex = userCart.products.findIndex(
@@ -57,20 +55,20 @@ const deleteCart = async (userId, productId, res) => {
     );
 
     if (productIndex === -1) {
-      return res.status(404).json({ message: "Товар не найден в корзине" });
+      return { status: 404, message: "Товар не найден в корзине" };
     }
 
     userCart.products.splice(productIndex, 1);
 
     await userCart.save();
 
-    return true;
+    return { status: 200, message: "Товар успешно удален из корзины" };
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "Произошла ошибка при удалении товара из корзины" });
-    return false;
+    return {
+      status: 500,
+      message: "Произошла ошибка при удалении товара из корзины",
+    };
   }
 };
 
