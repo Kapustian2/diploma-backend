@@ -26,7 +26,7 @@ const {
   updateProductSchema,
 } = require("./schemas/product.schema");
 const { createUserSchema, updateUserSchema } = require("./schemas/user.schema");
-const { addToCart, getCart } = require("./controllers/userCart");
+const { addToCart, getCart, deleteCart } = require("./controllers/userCart");
 
 const { validate } = new Validator();
 
@@ -184,6 +184,26 @@ app.get("/cart/:userId", async (req, res) => {
     res
       .status(500)
       .json({ error: "Произошла ошибка при получении корзины пользователя" });
+  }
+});
+
+app.delete("/cart/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.body.productId;
+
+    const deletedProduct = await deleteCart(userId, productId, res);
+
+    if (deletedProduct) {
+      res.status(200).json({ message: "Товар успешно удален из корзины" });
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Произошла ошибка при удалении товара из корзины" });
   }
 });
 

@@ -4,14 +4,14 @@ const UserCartSchema = mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Подразумевается, что у тебя есть модель "User"
+      ref: "User",
       required: true,
     },
     products: [
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Product", // Подразумевается, что у тебя есть модель "Product"
+          ref: "Product",
           required: true,
         },
         quantity: {

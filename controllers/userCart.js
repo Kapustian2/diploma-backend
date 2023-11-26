@@ -42,4 +42,36 @@ const getCart = async (userId) => {
   }
 };
 
-module.exports = { addToCart, getCart };
+const deleteCart = async (userId, productId, res) => {
+  try {
+    let userCart = await UserCart.findOne({ userId });
+
+    if (!userCart) {
+      return res
+        .status(404)
+        .json({ message: "Корзина пользователя не найдена" });
+    }
+
+    const productIndex = userCart.products.findIndex(
+      (product) => product.productId.toString() === productId
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Товар не найден в корзине" });
+    }
+
+    userCart.products.splice(productIndex, 1);
+
+    await userCart.save();
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Произошла ошибка при удалении товара из корзины" });
+    return false;
+  }
+};
+
+module.exports = { addToCart, getCart, deleteCart };
